@@ -10,25 +10,24 @@
             --primary-hover: #ea580c;
             --success: #22c55e;
             --success-hover: #16a34a;
-            --bg: #f8fafc;
-            --panel: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --header-bg: linear-gradient(135deg, #431407 0%, #7c2d12 100%);
-            --subtext: #64748b;
-            --input-bg: #f8fafc;
-        }
-
-        html[data-theme="dark"],
-        body[data-theme="dark"] {
             --bg: #0f172a;
             --panel: #1e293b;
             --text: #f8fafc;
             --border: #334155;
-            --header-bg: linear-gradient(135deg, #1c0a05 0%, #2c1007 100%);
+            --header-bg: linear-gradient(135deg, #431407 0%, #7c2d12 100%);
             --subtext: #94a3b8;
             --input-bg: #0f172a;
+            --danger: #ef4444;
+        }
+
+        html[data-theme="light"],
+        body[data-theme="light"] {
+            --bg: #f8fafc;
+            --panel: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --subtext: #64748b;
+            --input-bg: #f8fafc;
         }
 
         * {
@@ -47,8 +46,9 @@
         header {
             background: var(--header-bg);
             color: white;
-            padding: 20px;
+            padding: 30px 20px;
             text-align: center;
+            position: relative;
         }
 
         header h1 {
@@ -56,7 +56,6 @@
             font-size: 1.8rem;
         }
 
-        /* Main layout container - flexible and responsive */
         .container {
             width: 100%;
             max-width: 800px;
@@ -64,14 +63,13 @@
             padding: 15px;
         }
 
-        /* Configuration panels and cards */
         .panel {
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .panel h3 {
@@ -81,7 +79,6 @@
             padding-bottom: 8px;
         }
 
-        /* Form input fields wrapper */
         .input-group {
             margin-bottom: 15px;
         }
@@ -95,7 +92,7 @@
 
         input, select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border);
             background: var(--input-bg);
             color: var(--text);
@@ -109,35 +106,39 @@
             border-color: var(--primary);
         }
 
-        /* Parts Matrix rows - wraps automatically on mobile screens */
+        /* Fixed Parts Matrix grid - no text cutting */
         .parts-row {
-            display: flex;
-            flex-wrap: wrap; 
+            display: grid;
+            grid-template-columns: 1fr auto 1fr 0.8fr auto;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             align-items: center;
         }
 
-        .parts-row input {
-            flex: 1;
-            min-width: 80px; 
+        .parts-row span {
+            color: var(--subtext);
+            font-weight: bold;
+            text-align: center;
         }
 
         .parts-row .btn-remove {
             background: var(--danger);
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 12px;
             border-radius: 6px;
             cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Standard buttons */
         .btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 1rem;
             font-weight: 600;
             border-radius: 6px;
@@ -152,44 +153,42 @@
 
         .btn-success {
             background: var(--success);
+            margin-top: 15px;
         }
 
         .btn-success:hover {
             background: var(--success-hover);
         }
 
-        /* Theme switch button */
         .theme-toggle {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.85rem;
         }
 
-        html[data-theme="dark"] .theme-toggle {
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        /* Mobile layout overrides */
-        @media (max-width: 600px) {
-            header {
-                padding: 35px 15px 15px 15px; 
-            }
+        /* Mobile optimization */
+        @media (max-width: 500px) {
             .parts-row {
-                background: var(--bg);
-                padding: 10px;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px;
+                background: rgba(0, 0, 0, 0.1);
+                padding: 12px;
                 border-radius: 8px;
                 border: 1px dashed var(--border);
             }
-            .parts-row input[placeholder="Qty"] {
-                flex: 1;
-                min-width: 60px;
+            .parts-row span {
+                display: none; /* Hide 'x' on mobile to save space */
+            }
+            .parts-row .btn-remove {
+                grid-column: span 3; /* Full width remove button on mobile */
+                padding: 8px;
             }
         }
     </style>
@@ -204,68 +203,68 @@
     </header>
 
     <div class="container">
-        <div class="panel">
-            <h3>Material Config</h3>
-            <div class="input-group">
-                <label>Material Type</label>
-                <select>
-                    <option>MDF (Medium Density Fiberboard)</option>
-                    <option>Plywood</option>
-                    <option>Chipboard</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Sheet Width (mm)</label>
-                <input type="number" value="2440">
-            </div>
-            <div class="input-group">
-                <label>Sheet Height (mm)</label>
-                <input type="number" value="1220">
-            </div>
-            <div class="input-group">
-                <label>Blade Kerf / Waste (mm)</label>
-                <input type="number" value="4">
-            </div>
-        </div>
-
-        <div class="panel">
-            <h3>Parts Matrix</h3>
-            <div id="parts-container">
-                <div class="parts-row">
-                    <input type="number" placeholder="Width (mm)">
-                    <span>×</span>
-                    <input type="number" placeholder="Height (mm)">
-                    <input type="number" placeholder="Qty">
-                    <button class="btn-remove">✕</button>
+        <form action="/optimize" method="POST">
+            <div class="panel">
+                <h3>Material Config</h3>
+                <div class="input-group">
+                    <label>Material Type</label>
+                    <select name="material_type">
+                        <option value="MDF">MDF (Medium Density Fiberboard)</option>
+                        <option value="Plywood">Plywood</option>
+                        <option value="Chipboard">Chipboard</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Sheet Width (mm)</label>
+                    <input type="number" name="sheet_width" value="2440" required>
+                </div>
+                <div class="input-group">
+                    <label>Sheet Height (mm)</label>
+                    <input type="number" name="sheet_height" value="1220" required>
+                </div>
+                <div class="input-group">
+                    <label>Blade Kerf / Waste (mm)</label>
+                    <input type="number" name="blade_kerf" value="4" required>
                 </div>
             </div>
-            
-            <button class="btn" style="margin-top: 10px; background: transparent; color: var(--primary); border: 1px solid var(--primary);" onclick="addPartRow()">+ Add Part</button>
-        </div>
 
-        <button class="btn btn-success">Optimize Layout Map</button>
+            <div class="panel">
+                <h3>Parts Matrix</h3>
+                <div id="parts-container">
+                    <div class="parts-row">
+                        <input type="number" name="part_width[]" placeholder="Width (mm)" required>
+                        <span>×</span>
+                        <input type="number" name="part_height[]" placeholder="Height (mm)" required>
+                        <input type="number" name="part_qty[]" placeholder="Qty" required>
+                        <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn" style="margin-top: 10px; background: transparent; color: var(--primary); border: 1px solid var(--primary);" onclick="addPartRow()">+ Add Part</button>
+            </div>
+
+            <button type="submit" class="btn btn-success">Optimize Layout Map</button>
+        </form>
     </div>
 
     <script>
-        // Dark/Light theme toggle mechanism
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', newTheme);
         }
 
-        // Dynamically add new item rows to the matrix
         function addPartRow() {
             const container = document.getElementById('parts-container');
             const newRow = document.createElement('div');
             newRow.className = 'parts-row';
             newRow.innerHTML = `
-                <input type="number" placeholder="Width (mm)">
+                <input type="number" name="part_width[]" placeholder="Width (mm)" required>
                 <span>×</span>
-                <input type="number" placeholder="Height (mm)">
-                <input type="number" placeholder="Qty">
-                <button class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+                <input type="number" name="part_height[]" placeholder="Height (mm)" required>
+                <input type="number" name="part_qty[]" placeholder="Qty" required>
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
             `;
             container.appendChild(newRow);
         }
