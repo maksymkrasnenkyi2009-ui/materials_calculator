@@ -32,6 +32,11 @@
             --input-bg: #0f172a;
         }
 
+        /* Універсальне скидання, щоб нічого нікуди не вилазило */
+        * {
+            box-sizing: border-box !important;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
@@ -39,6 +44,8 @@
             margin: 0;
             padding: 0;
             transition: background 0.2s, color 0.2s;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         header {
@@ -97,6 +104,7 @@
         }
 
         .container {
+            width: 100%;
             max-width: 1000px;
             margin: 40px auto;
             padding: 0 20px;
@@ -110,6 +118,7 @@
             border: 1px solid var(--border);
             margin-bottom: 30px;
             transition: background 0.2s;
+            width: 100%;
         }
 
         h3 {
@@ -122,17 +131,19 @@
             margin-bottom: 20px;
         }
 
-        /* Fixed desktop layouts with wide gaps */
+        /* Рівна гнучка сітка для комп'ютера */
         .grid-4 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
             margin-bottom: 25px;
+            width: 100%;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
+            width: 100%;
         }
 
         label {
@@ -163,16 +174,18 @@
             box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
         }
 
+        /* Рядки матриці деталей */
         .part-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 15px;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             background: var(--input-bg);
-            padding: 12px;
+            padding: 15px;
             border-radius: 12px;
             border: 1px solid var(--border);
+            width: 100%;
         }
 
         .part-row span {
@@ -279,44 +292,49 @@
             display: none;
         }
 
-        /* Strict mobile configurations overrides */
-        @media (max-width: 650px) {
+        /* Залізобетонна адаптація для мобільних екранів */
+        @media (max-width: 768px) {
             header {
-                padding: 70px 15px 20px 15px;
+                padding: 80px 15px 20px 15px;
             }
             .theme-toggle {
                 right: 50%;
                 transform: translateX(50%);
                 top: 15px;
+                width: auto;
             }
             .container {
                 margin: 15px auto;
                 padding: 0 10px;
             }
             .card {
-                padding: 20px;
-                border-radius: 14px;
+                padding: 20px 15px;
+                border-radius: 16px;
             }
+            /* Поля конфігурації падають строго в один стовпчик і займають 100% простору */
             .grid-4 {
                 grid-template-columns: 1fr !important;
-                gap: 16px !important;
+                gap: 16px;
             }
+            /* Матриця деталей стає чіткою вертикальною структурою */
             .part-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
                 gap: 12px;
-                padding: 12px;
+                padding: 15px;
             }
             .part-row span {
-                display: none;
+                display: none; /* Ховаємо хрестики між інпутами */
             }
-            .part-row .input-group[style*="flex:1"] {
-                grid-column: span 2;
+            .part-row .input-group {
+                flex: none !important;
+                width: 100% !important;
             }
             .part-row .btn-delete {
-                grid-column: span 2;
                 width: 100%;
-                padding: 10px;
+                padding: 12px;
+                text-align: center;
             }
         }
     </style>
