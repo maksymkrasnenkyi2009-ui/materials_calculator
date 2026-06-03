@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -41,26 +42,44 @@ def calculate():
         return None
 
     for part in parts:
-        if part['w'] > sw or part['h'] > sh:
+        # Check if part fits in either normal or rotated orientation
+        can_fit_normal = part['w'] <= sw and part['h'] <= sh
+        can_fit_rotated = part['h'] <= sw and part['w'] <= sh
+        
+        if not can_fit_normal and not can_fit_rotated:
             return jsonify({'error': f"Part {part['w']}x{part['h']} physically exceeds sheet bounds!"}), 400
             
         placed = False
         for sheet in sheets:
-            space = find_space(sheet, part['w'], part['h'])
-            if space:
-                x, y = space
-                sheet['placed'].append({'w': part['w'], 'h': part['h'], 'x': x, 'y': y})
-                placed = True
-                break
+            # 1. Try to place in original orientation
+            if can_fit_normal:
+                space = find_space(sheet, part['w'], part['h'])
+                if space:
+                    x, y = space
+                    sheet['placed'].append({'w': part['w'], 'h': part['h'], 'x': x, 'y': y})
+                    placed = True
+                    break
+            
+            # 2. If it doesn't fit, try rotating 90 degrees
+            if can_fit_rotated:
+                space = find_space(sheet, part['h'], part['w'])
+                if space:
+                    x, y = space
+                    sheet['placed'].append({'w': part['h'], 'h': part['w'], 'x': x, 'y': y})
+                    placed = True
+                    break
                 
         if not placed:
             new_sheet = {'placed': []}
-            new_sheet['placed'].append({'w': part['w'], 'h': part['h'], 'x': 0, 'y': 0})
+            # Choose best starting orientation for the brand new sheet
+            if can_fit_normal:
+                new_sheet['placed'].append({'w': part['w'], 'h': part['h'], 'x': 0, 'y': 0})
+            else:
+                new_sheet['placed'].append({'w': part['h'], 'h': part['w'], 'x': 0, 'y': 0})
             sheets.append(new_sheet)
 
     return jsonify({'sheets': sheets})
 
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
