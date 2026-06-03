@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -6,61 +7,35 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/calculate', methods=['POST'])
-def calculate():
-    data = request.json
-    sw = int(data['sheetW'])
-    sh = int(data['sheetH'])
-    kerf = int(data['kerf']) 
-    raw_parts = data['parts']
-    
-    parts = []
-    for p in raw_parts:
-        for _ in range(int(p['qty'])):
-            parts.append({'w': int(p['w']), 'h': int(p['h'])})
-            
-    # Sort parts by area (descending)
-    parts.sort(key=lambda x: x['w'] * x['h'], reverse=True)
-    sheets = []
-
-    def find_space(sheet, pw, ph):
-        step = 15 # Grid step in mm
-        required_w = pw + kerf
-        required_h = ph + kerf
+@app.route('/optimize', methods=['POST'])
+def optimize():
+    try:
+        # Зчитуємо дані з форми
+        sheet_width = float(request.form.get('sheet_width', 2440))
+        sheet_height = float(request.form.get('sheet_height', 1220))
+        blade_kerf = float(request.form.get('blade_kerf', 4))
         
-        for y in range(0, sh - ph + 1, step):
-            for x in range(0, sw - pw + 1, step):
-                overlap = False
-                for p in sheet['placed']:
-                    if not (x + required_w <= p['x'] or x >= p['x'] + p['w'] + kerf or 
-                            y + required_h <= p['y'] or y >= p['y'] + p['h'] + kerf):
-                        overlap = True
-                        break
-                if not overlap:
-                    return x, y
-        return None
-
-    for part in parts:
-        if part['w'] > sw or part['h'] > sh:
-            return jsonify({'error': f"Part {part['w']}x{part['h']} physically exceeds sheet bounds!"}), 400
-            
-        placed = False
-        for sheet in sheets:
-            space = find_space(sheet, part['w'], part['h'])
-            if space:
-                x, y = space
-                sheet['placed'].append({'w': part['w'], 'h': part['h'], 'x': x, 'y': y})
-                placed = True
-                break
-                
-        if not placed:
-            new_sheet = {'placed': []}
-            new_sheet['placed'].append({'w': part['w'], 'h': part['h'], 'x': 0, 'y': 0})
-            sheets.append(new_sheet)
-
-    return jsonify({'sheets': sheets})
+        widths = request.form.getlist('part_width[]')
+        heights = request.form.getlist('part_height[]')
+        qtys = request.form.getlist('part_qty[]')
+        
+        # Перетворюємо у числа
+        parts = []
+        for i in range(len(widths)):
+            if widths[i] and heights[i] and qtys[i]:
+                parts.append({
+                    'width': float(widths[i]),
+                    'height': float(heights[i]),
+                    'qty': int(qtys[i])
+                })
+        
+        # Твоя логіка розрахунку (поки повертаємо статус успіху для тесту)
+        return f"<h3>Data Received Successfully!</h3><p>Main sheet: {sheet_width}x{sheet_height}</p><p>Parts count: {len(parts)}</p><br><a href='/'>Go Back</a>"
+    
+    except Exception as e:
+        return f"Error: {str(e)}", 400
 
 if __name__ == '__main__':
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    # Обов'язкові налаштування порту для Render
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
