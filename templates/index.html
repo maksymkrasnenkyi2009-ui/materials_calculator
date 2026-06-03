@@ -122,10 +122,11 @@
             margin-bottom: 20px;
         }
 
+        /* Fixed desktop layouts with wide gaps */
         .grid-4 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
             margin-bottom: 25px;
         }
 
@@ -162,7 +163,6 @@
             box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
         }
 
-        /* Responsive rows layout for matrix fields */
         .part-row {
             display: flex;
             flex-wrap: wrap;
@@ -258,7 +258,6 @@
             border-radius: 4px;
         }
 
-        /* Fully fluid dynamic canvas sizing */
         canvas {
             display: block;
             border-radius: 0px;
@@ -280,7 +279,7 @@
             display: none;
         }
 
-        /* Smartphone optimizations */
+        /* Strict mobile configurations overrides */
         @media (max-width: 650px) {
             header {
                 padding: 70px 15px 20px 15px;
@@ -295,14 +294,18 @@
                 padding: 0 10px;
             }
             .card {
-                padding: 15px;
+                padding: 20px;
                 border-radius: 14px;
+            }
+            .grid-4 {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
             }
             .part-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 10px;
-                padding: 10px;
+                gap: 12px;
+                padding: 12px;
             }
             .part-row span {
                 display: none;
@@ -313,7 +316,7 @@
             .part-row .btn-delete {
                 grid-column: span 2;
                 width: 100%;
-                padding: 8px;
+                padding: 10px;
             }
         }
     </style>
